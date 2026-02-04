@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { urlConfig } from '../../config';
 import { useAppContext } from '../../context/AuthContext';
@@ -7,6 +7,13 @@ import './LoginPage.css';
 function LoginPage() {
     const navigate = useNavigate();
     const { setIsLoggedIn } = useAppContext();
+
+    useEffect(() => {
+        const authToken = sessionStorage.getItem('auth-token');
+        if (authToken) {
+            navigate('/app');
+        }
+    }, [navigate]);
 
     // State variables for form inputs
     const [email, setEmail] = useState('');
@@ -38,6 +45,7 @@ function LoginPage() {
                 } else {
                     setError("Login failed");
                 }
+                setPassword(''); // Clear password field on error
                 return;
             }
 

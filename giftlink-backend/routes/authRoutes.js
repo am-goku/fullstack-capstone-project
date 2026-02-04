@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 const connectToDatabase = require('../models/db');
 const dotenv = require('dotenv');
 const pino = require('pino');
+const { body, validationResult } = require('express-validator');
 
 // Create Pino logger instance
 const logger = pino();
@@ -109,6 +110,75 @@ router.post('/login', async (req, res) => {
     } catch (e) {
         logger.error(e);
         return res.status(500).send('Internal server error');
+    }
+});
+
+
+// Update profile endpoint
+router.put('/update', [
+    // Task 1: Use the body, validationResult from express-validator for input validation
+    body('email', 'Invalid email').isEmail(),
+    body('firstName', 'First name is required').notEmpty(),
+    // body('lastName', 'Last name is required').notEmpty(), // Assuming lastName is also updated but user requirement specifically mentioned firstName validation style
+], async (req, res) => {
+    // Task 2: Validate the input using validationResult and return appropriate message if there is an error.
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        logger.error('Validation errors in update request', errors.array());
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+        // Task 3: Check if email is present in the header and throw an appropriate error message if not present.
+        const email = req.headers.email;
+        if (!email) {
+            logger.error('Email not found in the header');
+            return res.status(400).json({ error: 'Email not found in the header' });
+        }
+
+        // Task 4: Connect to `giftsdb` in MongoDB through `connectToDatabase` in `db.js` and access users collection.
+        const db = await connectToDatabase();
+        const collection = db.collection('users');
+
+        // Task 5: Find user credentials in database
+        const existingUser = await collection.findOne({ email: email });
+
+        if (!existingUser) {
+            logger.error('User not found for update');
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Task 6: Update user credentials in database
+        existingUser.firstName = req.body.firstName;
+        existingUser.lastName = req.body.lastName; // Assuming we update last name too if provided
+        existingUser.updatedAt = new Date();
+
+        // If password is provided, re-hash it
+        if (req.body.password) {
+            const salt = await bcryptjs.genSalt(10);
+            existingUser.password = await bcryptjs.hash(req.body.password, salt);
+        }
+
+        await collection.updateOne(
+            { email: email },
+            { $set: existingUser } // Update the document
+        );
+
+        // Task 7: Create JWT authentication with user._id as payload using secret key from .env file
+        const payload = {
+            user: {
+                id: existingUser._id.toString(),
+            },
+        };
+
+        const authtoken = jwt.sign(payload, JWT_SECRET);
+
+        logger.info('User updated successfully');
+        res.json({ authtoken, userName: existingUser.firstName, email: existingUser.email });
+
+    } catch (error) {
+        logger.error('Update error:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
