@@ -1,26 +1,217 @@
 /* Task 1: Style the search input field */
 .search-input {
-    /* Insert specific CSS properties here */
+    padding: 12px 15px;
+    border: 2px solid #e1e1e1;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    width: 100%;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+}
+
+.search-input::placeholder {
+    color: #aaa;
 }
 
 /* Task 2: Style the search button */
 .search-button {
-    /* Insert specific CSS properties here */
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    padding: 12px 30px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    width: 100%;
+}
+
+.search-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+}
+
+.search-button:active {
+    transform: translateY(0);
 }
 
 /* Task 3: Customize dropdown filters */
-.dropdown-filter {
-    /* Insert specific CSS properties here */
+.dropdown-filter,
+.form-select {
+    padding: 10px 15px;
+    border: 2px solid #e1e1e1;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: white;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+.dropdown-filter:focus,
+.form-select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
 }
 
 /* Task 4: Style the age range slider */
-.age-range-slider {
-    /* Insert specific CSS properties here */
+.age-range-slider,
+.form-range {
+    width: 100%;
+    height: 8px;
+    border-radius: 5px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    outline: none;
+    cursor: pointer;
+}
+
+.form-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #667eea;
+    cursor: pointer;
+    border: 3px solid white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease;
+}
+
+.form-range::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+}
+
+.form-range::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #667eea;
+    cursor: pointer;
+    border: 3px solid white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 /* Task 5: Enhance search results cards appearance */
-.search-results-card {
-    /* Insert specific CSS properties here */
+.search-results-card,
+.search-results .card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
 }
 
-/* Additional placeholders for tasks 6 to 10 */
+/* Task 6: Style the "No products found" alert message */
+.alert-info {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: none;
+    border-radius: 10px;
+    padding: 30px;
+    font-size: 1.1rem;
+    color: #6c757d;
+}
+
+/* Task 7: Apply a hover effect to the search results cards */
+.search-results .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
+    cursor: pointer;
+}
+
+.search-results .card-title {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.search-results .card-text {
+    color: #666;
+    font-size: 0.95rem;
+}
+
+.search-results .card-text strong {
+    color: #667eea;
+}
+
+/* Task 8: Ensure images in search results are displayed appropriately */
+.search-results .card-img-top {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-bottom: 1px solid #eee;
+}
+
+.search-results .no-image {
+    width: 100%;
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f8f9fa;
+    color: #aaa;
+    font-size: 1rem;
+}
+
+/* Task 9: Create a responsive layout for search results */
+@media (max-width: 768px) {
+    .filter-section {
+        padding: 15px !important;
+    }
+    
+    .search-input,
+    .search-button {
+        font-size: 0.95rem;
+        padding: 10px;
+    }
+    
+    .search-results .card {
+        margin-bottom: 15px;
+    }
+}
+
+@media (min-width: 992px) {
+    .search-results .row {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    
+    .search-results .col-12 {
+        flex: 0 0 100%;
+    }
+}
+
+/* Task 10: Overall page styling */
+.filter-section {
+    background-color: #f8f9fa;
+    border-radius: 10px !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.filter-section h5 {
+    color: #333;
+    font-weight: 700;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #667eea;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.search-results {
+    margin-top: 20px;
+}
+
+.container {
+    padding-bottom: 40px;
+}
