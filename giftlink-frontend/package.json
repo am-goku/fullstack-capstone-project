@@ -18,6 +18,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "postbuild": "cp -r build ../giftwebsite/",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
