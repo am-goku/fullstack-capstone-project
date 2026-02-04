@@ -1,20 +1,62 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { urlConfig } from '../../config';
+import { useAppContext } from '../../context/AuthContext';
 import './RegisterPage.css';
 
 function RegisterPage() {
+    const navigate = useNavigate();
+    const { setIsLoggedIn } = useAppContext();
+
     // State variables for form inputs
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
 
     // Handle registration
-    const handleRegister = () => {
-        console.log('Register button clicked');
-        console.log('First Name:', firstName);
-        console.log('Last Name:', lastName);
-        console.log('Email:', email);
-        console.log('Password:', password);
+    const handleRegister = async () => {
+        try {
+            const response = await fetch(`${urlConfig.backendUrl}/api/auth/register`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    firstName,
+                    lastName,
+                    email,
+                    password
+                }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                if (data.error) {
+                    setError(data.error);
+                } else {
+                    setError("Registration failed");
+                }
+                return;
+            }
+
+            // Store auth token and user info in session storage
+            sessionStorage.setItem('auth-token', data.authtoken);
+            sessionStorage.setItem('name', data.userName);
+            sessionStorage.setItem('email', data.email);
+
+            // Create a local variable for navigate and setIsLoggedIn
+            setIsLoggedIn(true);
+
+            // Navigate to the main app page
+            navigate('/app');
+
+        } catch (err) {
+            console.error(err);
+            setError("An error occurred during registration");
+        }
     };
 
     return (
@@ -22,6 +64,8 @@ function RegisterPage() {
             <div className="register-card">
                 <h2 className="register-title">Create Account</h2>
                 <p className="register-subtitle">Join GiftLink today</p>
+
+                {error && <p className="text-danger text-center">{error}</p>}
 
                 <div className="form-group">
                     <label htmlFor="firstName">First Name</label>
