@@ -1,16 +1,61 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { urlConfig } from '../../config';
+import { useAppContext } from '../../context/AuthContext';
 import './LoginPage.css';
 
 function LoginPage() {
+    const navigate = useNavigate();
+    const { setIsLoggedIn } = useAppContext();
+
     // State variables for form inputs
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    // const [error, setError] = useState(''); // Removed unused error state for now to match user request style or keep it simple? 
+    // The user request "Send appropriate message if user not found" implies validation, but for frontend consumption we need to show it.
+    // I will add error state back as it's good practice.
+    const [error, setError] = useState('');
 
     // Handle login
-    const handleLogin = () => {
-        console.log('Login button clicked');
-        console.log('Email:', email);
-        console.log('Password:', password);
+    const handleLogin = async () => {
+        try {
+            const response = await fetch(`${urlConfig.backendUrl}/api/auth/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email,
+                    password
+                }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                if (data.error) {
+                    setError(data.error);
+                } else {
+                    setError("Login failed");
+                }
+                return;
+            }
+
+            // Store auth token and user info in session storage
+            sessionStorage.setItem('auth-token', data.authtoken);
+            sessionStorage.setItem('name', data.userName);
+            sessionStorage.setItem('email', data.email);
+
+            // Update the global state
+            setIsLoggedIn(true);
+
+            // Navigate to the main app page
+            navigate('/app');
+
+        } catch (err) {
+            console.error(err);
+            setError("An error occurred during login");
+        }
     };
 
     return (
@@ -18,6 +63,8 @@ function LoginPage() {
             <div className="login-card">
                 <h2 className="login-title">Welcome Back</h2>
                 <p className="login-subtitle">Sign in to your account</p>
+
+                {error && <p className="text-danger text-center">{error}</p>}
 
                 <div className="form-group">
                     <label htmlFor="email">Email</label>
